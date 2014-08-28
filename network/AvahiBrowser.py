@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+import logging
+
 import avahi, dbus
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
@@ -20,21 +23,30 @@ class AvahiBrowser(GObject.GObject):
 
     def __init__(self, loop=None, service='_geysign._tcp'):
         GObject.GObject.__init__(self)
+        
+        self.log = logging.getLogger()
 
         self.service = service
         # It seems that these are different loops..?!
         self.loop = loop or DBusGMainLoop()
         self.bus = dbus.SystemBus(mainloop=self.loop)
 
-        self.server = dbus.Interface( self.bus.get_object(avahi.DBUS_NAME, '/'),
-                'org.freedesktop.Avahi.Server')
+        self.log.info("Acquiring server")
+        if not self.bus.name_has_owner('org.freedesktop.Avahi'):
+            self.log.error("Avahi service does not seem to be running, "\
+                           "org.freedesktop.Avahi is not owned on the bus")
+            self.server = None
+        else:
+            self.server = dbus.Interface( self.bus.get_object(avahi.DBUS_NAME, '/'),
+                    'org.freedesktop.Avahi.Server',
+                    )
+        
+            self.sbrowser = dbus.Interface(self.bus.get_object(avahi.DBUS_NAME,
+                self.server.ServiceBrowserNew(avahi.IF_UNSPEC,
+                    avahi.PROTO_UNSPEC, self.service, 'local', dbus.UInt32(0))),
+                avahi.DBUS_INTERFACE_SERVICE_BROWSER)
 
-        self.sbrowser = dbus.Interface(self.bus.get_object(avahi.DBUS_NAME,
-            self.server.ServiceBrowserNew(avahi.IF_UNSPEC,
-                avahi.PROTO_UNSPEC, self.service, 'local', dbus.UInt32(0))),
-            avahi.DBUS_INTERFACE_SERVICE_BROWSER)
-
-        self.sbrowser.connect_to_signal("ItemNew", self.on_new_item)
+            self.sbrowser.connect_to_signal("ItemNew", self.on_new_item)
 
     def on_new_item(self, interface, protocol, name, stype, domain, flags):
         print "Found service '%s' type '%s' domain '%s' " % (name, stype, domain)
