@@ -62,9 +62,15 @@ class AvahiPublisher:
                 avahi.string_array_to_txt_array (self.service_txt))
         group.Commit()
 
+
     def remove_service(self):
         if not self.group is None:
-            self.group.Reset()
+            try:
+                self.group.Reset()
+            except dbus.exceptions.DBusException as e:
+                self.log.debug('%s: Unpublish failed: %s', self, e)
+            finally:
+                self.group = None
 
 
     def server_state_changed(self, state):
