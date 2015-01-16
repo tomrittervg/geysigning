@@ -123,9 +123,11 @@ class MainWindow(Gtk.Application):
         self.log.info('Finsihed serving')
         return False
 
-
     def stop_server(self):
         self.keyserver.shutdown()
+        #self.setup_avahi_browser()
+        #self.setup_server(?)
+        #keyserver is shut down when key is removed from list.
 
 
     def on_new_service(self, browser, name, address, port, txt_dict):
@@ -149,6 +151,16 @@ class MainWindow(Gtk.Application):
         #List needs to be modified when server services are removed.
         return False
 
+    def remove_discovered_service(self, name, address, port, published_fpr):
+        '''Sorts and removes server-side clients from discovered_services list
+        by the matching address. Shuts down server.'''
+        key = lambda client: client[1]== address
+        self.discovered_services = sorted(self.discovered_services, key=key, reverse=True)
+        self.discovered_services = [self.discovered_services.pop(0)\
+            for clients in self.discovered_services if clients[1] == address]
+        self.log.info("Clients currently in list '%s'", self.discovered_services)
+        self.keyserver.shutdown()
+        return False
 
 
 def main():
