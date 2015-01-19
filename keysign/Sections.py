@@ -249,10 +249,10 @@ class KeySignSection(Gtk.VBox):
         keyid = key.keyid()
         fpr = key.fpr
         self.keyring.export_data(fpr, secret=False)
-        keydata = self.keyring.context.stdout
+        self.keydata = self.keyring.context.stdout
 
         self.log.debug("Keyserver switched on! Serving key with fpr: %s", fpr)
-        self.app.setup_server(keydata, fpr)
+        self.app.setup_server(self.keydata, fpr)
         
         self.switch_to_key_present_page(key)
 
@@ -292,7 +292,7 @@ class KeySignSection(Gtk.VBox):
             if page_index == 1:
                 self.log.debug("Keyserver switched off")
                 self.app.stop_server()
-            
+                self.app.setup_server(self.keydata, 'None')
             self.notebook.prev_page()
 
 

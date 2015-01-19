@@ -125,16 +125,20 @@ class MainWindow(Gtk.Application):
 
     def stop_server(self):
         self.keyserver.shutdown()
-        #self.setup_avahi_browser()
-        #self.setup_server(?)
+        self.setup_avahi_browser()
+        #self.setup_server("New string", None)
         #keyserver is shut down when key is removed from list.
 
 
     def on_new_service(self, browser, name, address, port, txt_dict):
         published_fpr = txt_dict.get('fingerprint', None)
         self.log.info("Probably discovered something, let's check; %s %s:%i:%s",             name, address, port, published_fpr)
-        if self.verify_service(name, address, port):
-            GLib.idle_add(self.add_discovered_service, name, address, port, published_fpr)
+        if published_fpr == 'None':
+            GLib.idle_add(self.remove_discovered_service, name, address, port,\
+                    published_fpr)
+        elif self.verify_service(name, address, port):
+            GLib.idle_add(self.add_discovered_service, name, address, port,\
+                    published_fpr)
         else:
             self.log.warn("Client was rejected: %s %s %i",
                         name, address, port)
