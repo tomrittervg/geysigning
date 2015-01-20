@@ -163,7 +163,10 @@ class MainWindow(Gtk.Application):
         self.discovered_services = [self.discovered_services.pop(0)\
             for clients in self.discovered_services if clients[1] == address]
         self.log.info("Clients currently in list '%s'", self.discovered_services)
-        self.keyserver.shutdown()
+        try:
+            self.keyserver.shutdown()
+        except Exception:
+            pass
         return False
 
 
