@@ -27,6 +27,8 @@ from network.AvahiPublisher import AvahiPublisher
 from gi.repository import Gtk, GLib, Gio
 from Sections import KeySignSection, GetKeySection
 
+import SigneesWindow
+
 import Keyserver
 
 class MainWindow(Gtk.Application):
@@ -99,6 +101,7 @@ class MainWindow(Gtk.Application):
         #self.window = Gtk.ApplicationWindow(application=app)
 
         self.window.show_all()
+        self.signeeswindow = SigneesWindow.SigneesWindow(self.discovered_services)
         # In case the user runs the application a second time,
         # we raise the existing window.
         # self.window.present()
@@ -153,6 +156,7 @@ class MainWindow(Gtk.Application):
     def add_discovered_service(self, name, address, port, published_fpr):
         self.discovered_services += ((name, address, port, published_fpr), )
         #List needs to be modified when server services are removed.
+        self.update_signees_window(self.discovered_services)
         return False
 
     def remove_discovered_service(self, name, address, port, published_fpr):
@@ -167,8 +171,16 @@ class MainWindow(Gtk.Application):
             self.keyserver.shutdown()
         except Exception:
             pass
+        self.update_signees_window(self.discovered_services)
         return False
 
+    def update_signees_window(self, discovered_services):
+        '''Creates a new list of fpr signatures from discovered services and counts the number
+        of unique fprs. Passes this argument to the SigneesWindow widget'''
+        fpr_list = []
+        [fpr_list.append(clients[3]) for clients in discovered_services if clients[3] != "None"]
+        unique_fpr = len(set(fpr_list))
+        self.signeeswindow.reset_label(unique_fpr)
 
 def main():
     app = MainWindow()
