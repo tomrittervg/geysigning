@@ -49,9 +49,40 @@ class SigneesLabel(Gtk.Label):
     def update(self):
         self.set_markup("<b><big>The number of signees on network is: "
                         "%s</big></b>" % self.data)
-        self.set_default_size(200,50)
+        self.set_default_size(200, 50)
 
     
+class AvahiListener(AvahiBrowser):
+    "This class saves the discovered services in a list"
+    
+    def __init__(self, *args, **kwargs):
+        '''Initialises the listener with an empty list of discovered
+        services
+        '''
+        self._discovered_services = []
+        super(AvahiListener, self).__init__(*args, **kwargs)
+    
+    
+    def on_service_resolved(self, *args, **kwargs):
+        '''This overloads the parent class and appends the discovered
+        service to the internal list of discovered services.
+        '''
+        self.discovered_services.append(args)
+        super(AvahiListener, self).on_service_resolved(*args, **kwargs)
+    
+    
+    def on_service_removed(self, *args):
+        '''Removes the services from the internal list'''
+        while args in self._discovered_services:
+            self._discovered_services.remove(args)
+        super(AvahiListener, self).on_service_removed(*args)
+
+
+    @property
+    def discovered_services(self):
+        '''Returns the internal list of discovered services'''
+        return self._discovered_services
+
 
 class SigneesApp(Gtk.Application):
     """A demo application showing the number of signees available on the 
