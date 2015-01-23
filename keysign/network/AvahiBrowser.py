@@ -61,6 +61,11 @@ if getattr(avahi, 'txt_array_to_dict', None) is None:
 
 class AvahiBrowser(GObject.GObject):
     __gsignals__ = {
+        # This is only cloning the original Avahi signals
+        'ItemNew' : (GObject.SIGNAL_RUN_LAST, None,
+                    # interface, protocol, name, stype, domain, flags
+                    # FIXME: I don't know whether str is the correct type
+                    (str, str, str, str, str, str)),
         'new_service': (GObject.SIGNAL_RUN_LAST, None,
             # name, address (could be an int too (for IPv4)), port, txt_dict
             (str, str, int, object))
@@ -92,6 +97,8 @@ class AvahiBrowser(GObject.GObject):
         if flags & avahi.LOOKUP_RESULT_LOCAL:
             # FIXME skip local services
             pass
+
+        self.emit('ItemNew', interface, protocol, name, stype, domain, flags)
 
         self.server.ResolveService(interface, protocol, name, stype,
             domain, avahi.PROTO_UNSPEC, dbus.UInt32(0),
