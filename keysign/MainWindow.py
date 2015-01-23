@@ -21,7 +21,6 @@ import logging
 import signal
 import sys
 
-from network.AvahiBrowser import AvahiBrowser
 from network.AvahiPublisher import AvahiPublisher
 
 from gi.repository import Gtk, GLib, Gio
@@ -106,12 +105,6 @@ class MainWindow(Gtk.Application):
         # we raise the existing window.
         # self.window.present()
 
-    def setup_avahi_browser(self):
-        # FIXME: place a proper service type
-        self.avahi_browser = AvahiBrowser(service=self.avahi_service_type)
-        self.avahi_browser.connect('new_service', self.on_new_service)
-
-        return False
 
     def setup_server(self, keydata, fingerprint):
         """
@@ -132,47 +125,6 @@ class MainWindow(Gtk.Application):
         #self.setup_server("New string", None)
         #keyserver is shut down when key is removed from list.
 
-
-    def on_new_service(self, browser, name, address, port, txt_dict):
-        published_fpr = txt_dict.get('fingerprint', None)
-        self.log.info("Probably discovered something, let's check; %s %s:%i:%s",             name, address, port, published_fpr)
-        if published_fpr == 'None':
-            GLib.idle_add(self.remove_discovered_service, name, address, port,\
-                    published_fpr)
-        elif self.verify_service(name, address, port):
-            GLib.idle_add(self.add_discovered_service, name, address, port,\
-                    published_fpr)
-        else:
-            self.log.warn("Client was rejected: %s %s %i",
-                        name, address, port)
-    
-
-    def verify_service(self, name, address, port):
-        '''A tiny function to return whether the service
-        is indeed something we are interested in'''
-        return True
-
-
-    def add_discovered_service(self, name, address, port, published_fpr):
-        self.discovered_services += ((name, address, port, published_fpr), )
-        #List needs to be modified when server services are removed.
-        self.update_signees_window(self.discovered_services)
-        return False
-
-    def remove_discovered_service(self, name, address, port, published_fpr):
-        '''Sorts and removes server-side clients from discovered_services list
-        by the matching address. Shuts down server.'''
-        key = lambda client: client[1]== address
-        self.discovered_services = sorted(self.discovered_services, key=key, reverse=True)
-        self.discovered_services = [self.discovered_services.pop(0)\
-            for clients in self.discovered_services if clients[1] == address]
-        self.log.info("Clients currently in list '%s'", self.discovered_services)
-        try:
-            self.keyserver.shutdown()
-        except Exception:
-            pass
-        self.update_signees_window(self.discovered_services)
-        return False
 
     def update_signees_window(self, discovered_services):
         '''Creates a new list of fpr signatures from discovered services and counts the number

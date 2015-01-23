@@ -29,6 +29,7 @@ from gi.repository import GObject
 from monkeysign.gpg import Keyring
 
 # These are relative imports
+from network.AvahiBrowser import AvahiBrowser
 from __init__ import __version__
 
 log = logging.getLogger()
@@ -70,6 +71,12 @@ class SigneesApp(Gtk.Application):
 
         self.signees = None
 
+        # Avahi services
+        self.avahi_browser = None
+        self.avahi_service_type = '_geysign._tcp'
+        self.discovered_services = []
+        GLib.idle_add(self.setup_avahi_browser)
+
 
     def on_quit(self, app, param=None):
         self.quit()
@@ -96,16 +103,73 @@ class SigneesApp(Gtk.Application):
 
         self.signees = Gtk.Label("Hallo")
         
-        GObject.timeout_add_seconds(1, self.on_timeout)
+        GObject.timeout_add_seconds(1, self.update)
         #SigneesWindow()
 
         super(SigneesApp, self).run()
 
 
-    def on_timeout(self):
-        log.debug('Timeout!')
-        self.signees.set_text('Clicked!')
+    #@property
+    #def discovered_services(self):
+    #    return self.avahi_browser.discovered_services
+        
+        
+    def update(self):
+        t = 'Number of Signees: %d' % len(self.discovered_services)
+        self.signees.set_text(t)
         return True
+
+
+    def setup_avahi_browser(self):
+        #self.avahi_browser = AvahiListener(service=self.avahi_service_type)
+        #self.avahi_browser.connect('ItemNew', self.update)
+        self.avahi_browser = AvahiBrowser(service=self.avahi_service_type)
+        self.avahi_browser.connect('new_service', self.on_new_service)
+
+        return False
+
+
+    def on_new_service(self, browser, name, address, port, txt_dict):
+        published_fpr = txt_dict.get('fingerprint', None)
+        self.log.info("Probably discovered something, let's check; %s %s:%i:%s",             name, address, port, published_fpr)
+        if published_fpr == 'None':
+            GLib.idle_add(self.remove_discovered_service, name, address, port,\
+                    published_fpr)
+        elif self.verify_service(name, address, port):
+            GLib.idle_add(self.add_discovered_service, name, address, port,\
+                    published_fpr)
+        else:
+            self.log.warn("Client was rejected: %s %s %i",
+                        name, address, port)
+    
+
+    def verify_service(self, name, address, port):
+        '''A tiny function to return whether the service
+        is indeed something we are interested in'''
+        return True
+
+
+    def add_discovered_service(self, name, address, port, published_fpr):
+        self.discovered_services += ((name, address, port, published_fpr), )
+        #List needs to be modified when server services are removed.
+        return False
+
+
+    def remove_discovered_service(self, name, address, port, published_fpr):
+        '''Sorts and removes server-side clients from discovered_services list
+        by the matching address. Shuts down server.'''
+        key = lambda client: client[1]== address
+        self.discovered_services = sorted(self.discovered_services, key=key, reverse=True)
+        self.discovered_services = [self.discovered_services.pop(0)\
+            for clients in self.discovered_services if clients[1] == address]
+        self.log.info("Clients currently in list '%s'", self.discovered_services)
+        try:
+            self.keyserver.shutdown()
+        except Exception:
+            pass
+        self.update_signees_window(self.discovered_services)
+        return False
+
 
 
 def parse_command_line(argv):
