@@ -149,7 +149,7 @@ class SigneesApp(Gtk.Application):
         return self.avahi_listener.discovered_services
         
         
-    def update(self):
+    def update(self, *args):
         'Updates the label with the number of signees'
         t = 'Number of Signees: %d' % len(self.discovered_services)
         self.signees.set_text(t)
@@ -160,6 +160,7 @@ class SigneesApp(Gtk.Application):
         'Initialises the Avahi listening service'
         self.avahi_listener = AvahiListener(service=self.avahi_service_type)
         self.avahi_listener.connect('ItemNew', self.update)
+        self.avahi_listener.connect('ItemRemove', self.update)
 
         return False
 
