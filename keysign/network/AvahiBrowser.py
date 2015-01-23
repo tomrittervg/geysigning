@@ -66,7 +66,7 @@ class AvahiBrowser(GObject.GObject):
                     # interface, protocol, name, stype, domain, flags
                     # FIXME: I don't know whether str is the correct type
                     (str, str, str, str, str, str)),
-        'new_service': (GObject.SIGNAL_RUN_LAST, None,
+        'ItemResolved': (GObject.SIGNAL_RUN_LAST, None,
             # name, address (could be an int too (for IPv4)), port, txt_dict
             (str, str, int, object))
     }
@@ -112,7 +112,7 @@ class AvahiBrowser(GObject.GObject):
         txt = avahi.txt_array_to_dict(txt)
         self.log.info("Service resolved; name: '%s', address: '%s',"\
                 "port: '%s', and txt: '%s'", name, address, port, txt)
-        retval = self.emit('new_service', name, address, port, txt)
+        retval = self.emit('ItemResolved', name, address, port, txt)
         self.log.info("emitted '%s'", retval)
 
 
@@ -131,7 +131,7 @@ def main():
     def print_signal(*args):
         print "Signal ahoi", args
 
-    ab.connect('new_service', print_signal)
+    ab.connect('ItemResolved', print_signal)
     loop.run()
 
 
