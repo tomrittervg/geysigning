@@ -67,15 +67,20 @@ class AvahiListener(AvahiBrowser):
         '''This overloads the parent class and appends the discovered
         service to the internal list of discovered services.
         '''
+        interface, protocol, name, stype, domain, \
+            host, aprotocol, address, port, txt, flags = args
+        
+        self.log.debug('Adding to the list of services: %s', args)
         self.discovered_services.append(args)
         super(AvahiListener, self).on_service_resolved(*args, **kwargs)
     
     
-    def on_service_removed(self, *args):
+    def on_item_removed(self, *args):
         '''Removes the services from the internal list'''
+        self.log.debug('Attempting to remove from list: %s', args)
         while args in self._discovered_services:
             self._discovered_services.remove(args)
-        super(AvahiListener, self).on_service_removed(*args)
+        super(AvahiListener, self).on_item_removed(*args)
 
 
     @property
