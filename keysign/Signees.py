@@ -103,10 +103,9 @@ class SigneesApp(Gtk.Application):
         self.signees = None
 
         # Avahi services
-        self.avahi_browser = None
+        self.avahi_listener = None
         self.avahi_service_type = '_geysign._tcp'
-        self.discovered_services = []
-        GLib.idle_add(self.setup_avahi_browser)
+        GLib.idle_add(self.setup_avahi_listener)
 
 
     def on_quit(self, app, param=None):
@@ -140,27 +139,30 @@ class SigneesApp(Gtk.Application):
         super(SigneesApp, self).run()
 
 
-    #@property
-    #def discovered_services(self):
-    #    return self.avahi_browser.discovered_services
+    @property
+    def discovered_services(self):
+        return self.avahi_listener.discovered_services
         
         
     def update(self):
+        'Updates the label with the number of signees'
         t = 'Number of Signees: %d' % len(self.discovered_services)
         self.signees.set_text(t)
         return True
 
 
-    def setup_avahi_browser(self):
-        #self.avahi_browser = AvahiListener(service=self.avahi_service_type)
-        #self.avahi_browser.connect('ItemNew', self.update)
-        self.avahi_browser = AvahiBrowser(service=self.avahi_service_type)
-        self.avahi_browser.connect('new_service', self.on_new_service)
+    def setup_avahi_listener(self):
+        'Initialises the Avahi listening service'
+        self.avahi_listener = AvahiListener(service=self.avahi_service_type)
+        self.avahi_listener.connect('ItemNew', self.update)
 
         return False
 
 
     def on_new_service(self, browser, name, address, port, txt_dict):
+        self.update()
+        return
+
         published_fpr = txt_dict.get('fingerprint', None)
         self.log.info("Probably discovered something, let's check; %s %s:%i:%s",             name, address, port, published_fpr)
         if published_fpr == 'None':
@@ -174,21 +176,19 @@ class SigneesApp(Gtk.Application):
                         name, address, port)
     
 
+
     def verify_service(self, name, address, port):
         '''A tiny function to return whether the service
         is indeed something we are interested in'''
         return True
 
 
-    def add_discovered_service(self, name, address, port, published_fpr):
-        self.discovered_services += ((name, address, port, published_fpr), )
-        #List needs to be modified when server services are removed.
-        return False
-
-
     def remove_discovered_service(self, name, address, port, published_fpr):
         '''Sorts and removes server-side clients from discovered_services list
         by the matching address. Shuts down server.'''
+        self.update()
+        return
+        
         key = lambda client: client[1]== address
         self.discovered_services = sorted(self.discovered_services, key=key, reverse=True)
         self.discovered_services = [self.discovered_services.pop(0)\
