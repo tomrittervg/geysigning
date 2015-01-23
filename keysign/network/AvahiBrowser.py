@@ -66,6 +66,11 @@ class AvahiBrowser(GObject.GObject):
                     # interface, protocol, name, stype, domain, flags
                     # FIXME: I don't know whether str is the correct type
                     (str, str, str, str, str, str)),
+        'ItemRemove' : (GObject.SIGNAL_RUN_LAST, None,
+                    # interface, protocol, name, stype, domain, flags
+                    # FIXME: I don't know whether str is the correct type
+                    (str, str, str, str, str, str)),
+
         'ItemResolved': (GObject.SIGNAL_RUN_LAST, None,
             # name, address (could be an int too (for IPv4)), port, txt_dict
             (str, str, int, object))
@@ -90,6 +95,13 @@ class AvahiBrowser(GObject.GObject):
             avahi.DBUS_INTERFACE_SERVICE_BROWSER)
 
         self.sbrowser.connect_to_signal("ItemNew", self.on_new_item)
+        self.sbrowser.connect_to_signal("ItemRemove", self.on_item_removed)
+
+
+    def on_item_removed(self, interface, protocol, name, stype, domain, flags):
+        self.log.debug('Item removed')
+        self.emit('ItemRemove', interface, protocol, name, stype, domain, flags)
+
 
     def on_new_item(self, interface, protocol, name, stype, domain, flags):
         print "Found service '%s' type '%s' domain '%s' " % (name, stype, domain)
