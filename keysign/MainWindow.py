@@ -26,7 +26,8 @@ from network.AvahiBrowser import AvahiBrowser
 from network.AvahiPublisher import AvahiPublisher
 
 from gi.repository import Gtk, GLib, Gio
-from Sections import KeySignSection, GetKeySection
+from KeySignSection import KeySignSection
+from GetKeySection import GetKeySection
 
 import Keyserver
 
