@@ -126,10 +126,7 @@ class GnomeKeysignClient(Gtk.Application):
         window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
         window.set_title("Gtk3 Python Example")
         get_key_section = GetKeySection(self)
-        notebook = Gtk.Notebook()
-        notebook.append_page(GetKeySection(self), Gtk.Label('Get Key'))
-        window.add(notebook)
-
+        window.add(get_key_section)
 
         window.show_all()
         self.add_window(window)
