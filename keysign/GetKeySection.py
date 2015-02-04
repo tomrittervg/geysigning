@@ -118,6 +118,9 @@ class HelloWorldApp(Gtk.Application):
         Gtk.Application.__init__(self, application_id="apps.test.helloworld",
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
         self.connect("activate", self.on_activate)
+        
+        self.discovered_services = None
+
 
     def on_activate(self, data=None):
         window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
