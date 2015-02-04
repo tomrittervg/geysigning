@@ -25,7 +25,6 @@ from monkeysign.gpg import Keyring, TempKeyring
 from KeysPage import KeysPage
 from KeyPresent import KeyPresentPage
 from SignPages import KeyDetailsPage
-import MainWindow
 
 from gi.repository import Gst, Gtk, GLib
 
