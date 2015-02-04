@@ -113,9 +113,9 @@ def MinimalExport(keydata):
     return stripped_key
 
 
-class HelloWorldApp(Gtk.Application):
+class GnomeKeysignClient(Gtk.Application):
     def __init__(self):
-        Gtk.Application.__init__(self, application_id="apps.test.helloworld",
+        Gtk.Application.__init__(self, application_id="org.gnome.keysign.client",
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
         self.connect("activate", self.on_activate)
         
@@ -125,7 +125,6 @@ class HelloWorldApp(Gtk.Application):
     def on_activate(self, data=None):
         window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
         window.set_title("Gtk3 Python Example")
-        window.set_border_width(24)
         get_key_section = GetKeySection(self)
         notebook = Gtk.Notebook()
         notebook.append_page(GetKeySection(self), Gtk.Label('Get Key'))
@@ -616,5 +615,5 @@ passwords."""
         return None
 
 if __name__ == "__main__":
-    app = HelloWorldApp()
+    app = GnomeKeysignClient()
     app.run(None)
