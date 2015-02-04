@@ -249,6 +249,9 @@ class GetKeySection(Gtk.VBox):
         # A list holding references to temporary files which should probably
         # be cleaned up on exit...
         self.tmpfiles = []
+        
+        self.last_received_fingerprint = None
+        self.received_key_data = None
 
     def set_progress_bar(self):
         page_index = self.notebook.get_current_page()
