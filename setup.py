@@ -50,6 +50,7 @@ setup(
         'gui_scripts': [
             'gnome-keysign = keysign:main',
             'gks-qrcode = keysign.GPGQRCode:main',
+            #'gnome-keysign-server = keysign.gnome-keysign-server:main',
         ],
     },
     
