@@ -49,6 +49,7 @@ setup(
         #],
         'gui_scripts': [
             'gnome-keysign = keysign:main',
+            'gnome-keysign-client = keysign.client:main',
             'gks-qrcode = keysign.GPGQRCode:main',
         ],
     },
