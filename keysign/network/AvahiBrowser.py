@@ -16,47 +16,22 @@
 #
 #    You should have received a copy of the GNU General Public License
 #    along with GNOME Keysign.  If not, see <http://www.gnu.org/licenses/>.
+import logging
+
+
 import avahi, dbus
 from dbus import DBusException
 from dbus.mainloop.glib import DBusGMainLoop
-
 from gi.repository import Gio
 from gi.repository import GObject
 
-import logging
+
+# This provides the txt_array_to_dict function
+import avahi_txt_dict
+
 
 __all__ = ["AvahiBrowser"]
 
-
-# This should probably be upstreamed.
-# Unfortunately, upstream seems rather inactive.
-if getattr(avahi, 'txt_array_to_dict', None) is None:
-    # This has been taken from Gajim
-    # http://hg.gajim.org/gajim/file/4a3f896130ad/src/common/zeroconf/zeroconf_avahi.py
-    # it is licensed under the GPLv3.
-    def txt_array_to_dict(txt_array):
-        txt_dict = {}
-        for els in txt_array:
-            key, val = '', None
-            for c in els:
-                    #FIXME: remove when outdated, this is for avahi < 0.6.14
-                    if c < 0 or c > 255:
-                        c = '.'
-                    else:
-                        c = chr(c)
-                    if val is None:
-                        if c == '=':
-                            val = ''
-                        else:
-                            key += c
-                    else:
-                        val += c
-            if val is None: # missing '='
-                val = ''
-            txt_dict[key] = val.decode('utf-8')
-        return txt_dict
-
-    setattr(avahi, 'txt_array_to_dict', txt_array_to_dict)
 
 
 class AvahiBrowser(GObject.GObject):
