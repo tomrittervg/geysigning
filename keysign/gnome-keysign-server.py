@@ -34,8 +34,8 @@ class GnomeKeysignServer(Gtk.Application):
 
     def on_activate(self, data=None):
         window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-        window.set_title("Gtk3 Python Example")
-        key_sign_section = KeySignSection(self)
+        window.set_title("GNOME Keysign Server")
+        key_sign_section = KeySignSection()
         window.add(key_sign_section)
 
         window.show_all()
