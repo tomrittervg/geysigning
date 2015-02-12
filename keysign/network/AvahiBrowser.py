@@ -122,7 +122,8 @@ class AvahiBrowser(GObject.GObject):
         self.log.info("emitted '%s'", retval)
 
 
-    def on_service_removed(self, interface, protocol, name, stype, domain, flags):
+    def on_service_removed(self,
+        interface, protocol, name, stype, domain, flags):
         '''Emits items to be removed from list of discovered services.'''
         self.log.info("Service removed; name: '%s'", name)
         retval = self.emit('remove_service', 'remove', name)
