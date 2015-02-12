@@ -19,34 +19,33 @@
 
 import logging
 from urlparse import ParseResult
+import re
 from string import Template
 import shutil
 from subprocess import call
+import sys
 from tempfile import NamedTemporaryFile
 
+
+from gi.repository import Gtk, GLib, Gio
+# Because of https://bugzilla.gnome.org/show_bug.cgi?id=698005
+from gi.repository import GdkX11
+# Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
+from gi.repository import Gst, GstVideo
 import requests
 from requests.exceptions import ConnectionError
-
-import sys
-import re
 
 from monkeysign.gpg import Keyring, TempKeyring
 from monkeysign.gpg import GpgRuntimeError
 
+
+from client_provider import AvahiClientProvider
+import key
 from SignPages import ScanFingerprintPage, SignKeyPage, PostSignPage
 
-import key
 
-from gi.repository import Gst, Gtk, GLib
-# Because of https://bugzilla.gnome.org/show_bug.cgi?id=698005
-from gi.repository import GdkX11
-# Needed for window.get_xid(), xvimagesink.set_window_handle(), respectively:
-from gi.repository import GstVideo
-
-import key
-from client_provider import AvahiClientProvider
-from gi.repository import Gtk, GLib, Gio
-
+# Is this harmful..?  There might be someone who has already called
+# init.  Will our own call cause problems, then?
 Gst.init([])
 
 progress_bar_text = ["Step 1: Scan QR Code or type fingerprint and click on 'Download' button",
