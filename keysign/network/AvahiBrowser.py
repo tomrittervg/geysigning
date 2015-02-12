@@ -83,6 +83,7 @@ class AvahiBrowser(GObject.GObject):
         self.server = dbus.Interface( self.bus.get_object(avahi.DBUS_NAME, '/'),
                 'org.freedesktop.Avahi.Server')
 
+        self.log.debug('Starting new browser for %r', service)
         self.sbrowser = dbus.Interface(self.bus.get_object(avahi.DBUS_NAME,
             self.server.ServiceBrowserNew(avahi.IF_UNSPEC,
                 avahi.PROTO_UNSPEC, self.service, 'local', dbus.UInt32(0))),
