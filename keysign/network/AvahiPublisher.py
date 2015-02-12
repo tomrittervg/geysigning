@@ -25,6 +25,11 @@ from dbus.mainloop.glib import DBusGMainLoop
 from gi.repository import GObject
 
 class AvahiPublisher:
+    '''A simple class for publishing your service on the
+    local network
+    
+    It uses Avahi via DBus to announce your service.
+    '''
 
     def __init__(self,
             service_name='Demo Service',
@@ -32,10 +37,19 @@ class AvahiPublisher:
             service_port=8899,
             service_txt={},
             domain='',
-            host=''):
+            host='',
+            mainloop=None):
+        '''Construct the service-announcing daemon
+        
+        The service_txt is a dictionary of properties that you would
+        like to have announced, e.g. {'version': 0.1}.
+        
+        If you give a mainloop, it will be fed to the DBus connection.
+        Otherwise, a DBusMainLoop() will be used.
+        '''
         self.log = logging.getLogger()
-        #self.loop = loop or DBusGMainLoop()
-        self.bus = dbus.SystemBus()
+        loop = mainloop or DBusGMainLoop()
+        self.bus = dbus.SystemBus(mainloop=loop)
         self.server = dbus.Interface(
             self.bus.get_object( avahi.DBUS_NAME, avahi.DBUS_PATH_SERVER ),
             avahi.DBUS_INTERFACE_SERVER )
@@ -121,6 +135,8 @@ class AvahiPublisher:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    log = logging.getLogger()
     DBusGMainLoop( set_as_default=True )
 
     ap = AvahiPublisher()
