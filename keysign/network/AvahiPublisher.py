@@ -121,6 +121,8 @@ class AvahiPublisher:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
+    log = logging.getLogger()
     DBusGMainLoop( set_as_default=True )
 
     ap = AvahiPublisher()
