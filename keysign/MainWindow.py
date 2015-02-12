@@ -22,7 +22,7 @@ import logging
 import signal
 import sys
 
-from network.AvahiBrowser import AvahiBrowser
+from client_provider import AvahiClientProvider
 from network.AvahiPublisher import AvahiPublisher
 
 from gi.repository import Gtk, GLib, Gio
@@ -57,7 +57,8 @@ class MainWindow(Gtk.Application):
         # create notebook container
         notebook = Gtk.Notebook()
         notebook.append_page(KeySignSection(), Gtk.Label('Keys'))
-        notebook.append_page(GetKeySection(self), Gtk.Label('Get Key'))
+        notebook.append_page(GetKeySection(AvahiClientProvider(service_type='_geysign._tcp')),
+                             Gtk.Label('Get Key'))
         self.window.add(notebook)
 
         quit = Gio.SimpleAction(name="quit", parameter_type=None)
@@ -69,7 +70,7 @@ class MainWindow(Gtk.Application):
         self.avahi_browser = None
         self.avahi_service_type = '_geysign._tcp'
         self.discovered_services = []
-        GLib.idle_add(self.setup_avahi_browser)
+        #GLib.idle_add(self.setup_avahi_browser)
 
         ## App menus
         appmenu = Gio.Menu.new()
