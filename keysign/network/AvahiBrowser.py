@@ -72,7 +72,7 @@ class AvahiBrowser(GObject.GObject):
 
 
     def __init__(self, loop=None, service='_geysign._tcp'):
-        GObject.GObject.__init__(self)
+        super(AvahiBrowser, self).__init__()
 
         self.log = logging.getLogger()
         self.service = service
