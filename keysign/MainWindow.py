@@ -104,7 +104,7 @@ class MainWindow(Gtk.Application):
 
     def setup_avahi_browser(self):
         # FIXME: place a proper service type
-        self.avahi_browser = AvahiBrowser(service=self.avahi_service_type)
+        self.avahi_browser = AvahiBrowser(service_type=self.avahi_service_type)
         self.avahi_browser.connect('new_service', self.on_new_service)
         self.avahi_browser.connect('remove_service', self.on_remove_service)
 
