@@ -50,8 +50,11 @@ class GnomeKeysignServer(Gtk.Application):
         self.log.error("Calling stop_server")
 
 
+def main(args=None):
+    app = GnomeKeysignServer()
+    app.run(args)
+
 if __name__ == "__main__":
     logging.basicConfig(stream=sys.stderr, level=logging.DEBUG,
             format='%(name)s (%(levelname)s): %(message)s')
-    app = GnomeKeysignServer()
-    app.run(None)
+    sys.exit(main(sys.argv[1:]))
