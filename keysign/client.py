@@ -553,7 +553,10 @@ class GnomeKeysignClient(Gtk.Application):
         self.add_window(window)
 
 
+def main(args=None):
+    app = GnomeKeysignClient()
+    return app.run(args)
+    
 
 if __name__ == "__main__":
-    app = GnomeKeysignClient()
-    app.run(None)
+    sys.exit(main(sys.argv[1:]))
