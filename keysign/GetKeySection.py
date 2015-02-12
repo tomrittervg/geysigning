@@ -44,6 +44,7 @@ from gi.repository import GdkX11
 from gi.repository import GstVideo
 
 import key
+from client_provider import AvahiClientProvider
 from gi.repository import Gtk, GLib, Gio
 
 Gst.init([])
@@ -117,14 +118,13 @@ class GnomeKeysignClient(Gtk.Application):
         Gtk.Application.__init__(self, application_id="org.gnome.keysign.client",
                                  flags=Gio.ApplicationFlags.FLAGS_NONE)
         self.connect("activate", self.on_activate)
-        
-        self.discovered_services = None
 
 
     def on_activate(self, data=None):
         window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-        window.set_title("Gtk3 Python Example")
-        get_key_section = GetKeySection(self)
+        window.set_title("GNOME Keysign Client")
+        client_provider = AvahiClientProvider('_geysign._tcp')
+        get_key_section = GetKeySection(client_provider)
         window.add(get_key_section)
 
         window.show_all()
