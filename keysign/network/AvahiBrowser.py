@@ -71,22 +71,29 @@ class AvahiBrowser(GObject.GObject):
     }
 
 
-    def __init__(self, loop=None, service='_geysign._tcp'):
+    def __init__(self, service_type, loop=None):
+        '''Initialises the AvahiBrowser with a service type to
+        browse for and given mainloop to be used for the DBus
+        connection
+        
+        The need to give a valid service_type such as '_geysign._tcp'.
+        
+        If you don't pass a loop, a DBusGMainLoop will be used.
+        '''
         super(AvahiBrowser, self).__init__()
 
         self.log = logging.getLogger()
-        self.service = service
-        # It seems that these are different loops..?!
+        self.service_type = service_type
         self.loop = loop or DBusGMainLoop()
         self.bus = dbus.SystemBus(mainloop=self.loop)
 
         self.server = dbus.Interface( self.bus.get_object(avahi.DBUS_NAME, '/'),
                 'org.freedesktop.Avahi.Server')
 
-        self.log.debug('Starting new browser for %r', service)
+        self.log.debug('Starting new browser for %r', service_type)
         self.sbrowser = dbus.Interface(self.bus.get_object(avahi.DBUS_NAME,
             self.server.ServiceBrowserNew(avahi.IF_UNSPEC,
-                avahi.PROTO_UNSPEC, self.service, 'local', dbus.UInt32(0))),
+                avahi.PROTO_UNSPEC, self.service_type, 'local', dbus.UInt32(0))),
             avahi.DBUS_INTERFACE_SERVICE_BROWSER)
 
         self.sbrowser.connect_to_signal("ItemNew", self.on_new_item)
