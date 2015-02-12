@@ -190,17 +190,17 @@ monkeysign.gpg.Context.build_command = build_command
 
 class GetKeySection(Gtk.VBox):
 
-    def __init__(self, app):
+    def __init__(self, client_provider):
         '''Initialises the section which lets the user
         start signing a key.
 
-        ``app'' should be the "app" itself. The place
-        which holds global app data, especially the discovered
-        clients on the network.
+        ``client_provider'' should be something with a
+        `get_discovered_services' function which returns
+        a list of candidates.
         '''
         super(GetKeySection, self).__init__()
 
-        self.app = app
+        self.client_provider = client_provider
         self.log = logging.getLogger()
 
         # the temporary keyring we operate in
@@ -334,7 +334,7 @@ class GetKeySection(Gtk.VBox):
         return clients
 
     def obtain_key_async(self, fingerprint, callback=None, data=None, error_cb=None):
-        other_clients = self.app.discovered_services
+        other_clients = self.client_provider.discovered_services
         self.log.debug("The clients found on the network: %s", other_clients)
 
         #FIXME: should we create a new TempKeyring for each key we want
