@@ -22,12 +22,14 @@ import logging
 import signal
 import sys
 
-from client_provider import AvahiClientProvider
-from network.AvahiPublisher import AvahiPublisher
 
 from gi.repository import Gtk, GLib, Gio
+
+
+from client_provider import AvahiClientProvider
 from KeySignSection import KeySignSection
 from GetKeySection import GetKeySection
+
 
 class MainWindow(Gtk.Application):
 
