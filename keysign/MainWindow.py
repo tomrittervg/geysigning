@@ -26,9 +26,9 @@ import sys
 from gi.repository import Gtk, GLib, Gio
 
 
+from client import GetKeySection
 from client_provider import AvahiClientProvider
 from KeySignSection import KeySignSection
-from GetKeySection import GetKeySection
 
 
 class MainWindow(Gtk.Application):
