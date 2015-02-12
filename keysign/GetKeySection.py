@@ -113,23 +113,6 @@ def MinimalExport(keydata):
     return stripped_key
 
 
-class GnomeKeysignClient(Gtk.Application):
-    def __init__(self):
-        Gtk.Application.__init__(self, application_id="org.gnome.keysign.client",
-                                 flags=Gio.ApplicationFlags.FLAGS_NONE)
-        self.connect("activate", self.on_activate)
-
-
-    def on_activate(self, data=None):
-        window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
-        window.set_title("GNOME Keysign Client")
-        client_provider = AvahiClientProvider('_geysign._tcp')
-        get_key_section = GetKeySection(client_provider)
-        window.add(get_key_section)
-
-        window.show_all()
-        self.add_window(window)
-
 
 class TempKeyringCopy(TempKeyring):
     """A temporary keyring which uses the secret keys of a parent keyring
@@ -549,6 +532,26 @@ class GetKeySection(Gtk.VBox):
         self.received_key_data = keydata
         openpgpkey = self.tmpkeyring.get_keys(fingerprint).values()[0]
         self.signPage.display_downloaded_key(openpgpkey, fingerprint)
+
+
+
+class GnomeKeysignClient(Gtk.Application):
+    def __init__(self):
+        Gtk.Application.__init__(self, application_id="org.gnome.keysign.client",
+                                 flags=Gio.ApplicationFlags.FLAGS_NONE)
+        self.connect("activate", self.on_activate)
+
+
+    def on_activate(self, data=None):
+        window = Gtk.Window(type=Gtk.WindowType.TOPLEVEL)
+        window.set_title("GNOME Keysign Client")
+        client_provider = AvahiClientProvider('_geysign._tcp')
+        get_key_section = GetKeySection(client_provider)
+        window.add(get_key_section)
+
+        window.show_all()
+        self.add_window(window)
+
 
 
 if __name__ == "__main__":
