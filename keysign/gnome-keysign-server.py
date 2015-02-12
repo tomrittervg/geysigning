@@ -42,13 +42,6 @@ class GnomeKeysignServer(Gtk.Application):
         self.add_window(window)
 
 
-    def setup_server(self, *args):
-        self.log.error("Calling setup_server")
-
-
-    def stop_server(self, *args):
-        self.log.error("Calling stop_server")
-
 
 def main(args=None):
     app = GnomeKeysignServer()
