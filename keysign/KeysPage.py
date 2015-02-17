@@ -140,7 +140,7 @@ class KeysPage(Gtk.VBox):
         self.scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         self.scrolled_window.add(self.treeView)
 
-        self.grid.attach(self.scrolled_window, 0, 0, 2, 1)
+        self.grid.attach(self.scrolled_window, 0, 0, 1, 1)
 
         self.right_pane = Gtk.VBox()
         right_label = Gtk.Label(label='Select key on the left')
