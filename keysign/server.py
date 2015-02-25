@@ -23,6 +23,7 @@ import sys
 from gi.repository import Gtk, Gio
 
 from KeySignSection import KeySignSection
+from __init__ import register_ctrlc_quit
 
 class GnomeKeysignServer(Gtk.Application):
     def __init__(self):
@@ -42,9 +43,9 @@ class GnomeKeysignServer(Gtk.Application):
         self.add_window(window)
 
 
-
 def main(args=None):
     app = GnomeKeysignServer()
+    register_ctrlc_quit(app)
     app.run(args)
 
 if __name__ == "__main__":
