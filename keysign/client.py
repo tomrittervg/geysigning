@@ -369,6 +369,11 @@ class GetKeySection(Gtk.VBox):
         # FIXME: WTF?! How would the ring enter the keyring in first place?!
         keydata = data or self.received_key_data
 
+        # We need to have either raw keydata or a fingerprint.
+        # Otherwise the filter for the keys to be signed will
+        # be smth like "None" which matches all keys.
+        assert keydata or fingerprint
+
         if keydata:
             stripped_key = MinimalExport(keydata)
         else: # Do we need this branch at all?
