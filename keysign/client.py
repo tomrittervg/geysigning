@@ -234,8 +234,10 @@ class GetKeySection(Gtk.VBox):
         self.last_received_fingerprint = None
         self.received_key_data = None
 
-    def set_progress_bar(self):
-        page_index = self.notebook.get_current_page()
+
+    def set_progress_bar(self, page_index=None):
+        if page_index is None:
+            page_index = self.notebook.get_current_page()
         self.progressBar.set_text(progress_bar_text[page_index])
         self.progressBar.set_fraction((page_index+1)/3.0)
 
