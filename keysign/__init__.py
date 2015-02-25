@@ -18,6 +18,19 @@
 
 __version__ = '0.1'
 
+import signal
+
+from gi.repository import GLib
+
+def register_ctrlc_quit(app):
+    '''Registers a signal handler with GLib to catch SIGINT'''
+    try:
+        GLib.unix_signal_add_full(GLib.PRIORITY_HIGH, signal.SIGINT, lambda *args : app.quit(), None)
+    except AttributeError:
+        return False
+
+    return True
+
 
 def main():
     # These imports were moved here because the keysign module
@@ -30,11 +43,8 @@ def main():
     from .MainWindow import MainWindow
 
     app = MainWindow()
-
-    try:
-        GLib.unix_signal_add_full(GLib.PRIORITY_HIGH, signal.SIGINT, lambda *args : app.quit(), None)
-    except AttributeError:
-        pass
+    
+    register_ctrlc_quit(app)
 
     exit_status = app.run(None)
 
