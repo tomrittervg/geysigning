@@ -202,6 +202,7 @@ class GetKeySection(Gtk.VBox):
         self.progressBar.set_text(progress_bar_text[0])
         self.progressBar.set_show_text(True)
         self.progressBar.set_fraction(1.0/3)
+        self.notebook.connect('switch-page', self.set_progress_bar)
 
         self.nextButton = Gtk.Button('Next')
         self.nextButton.connect('clicked', self.on_button_clicked)
@@ -235,7 +236,8 @@ class GetKeySection(Gtk.VBox):
         self.received_key_data = None
 
 
-    def set_progress_bar(self, page_index=None):
+    def set_progress_bar(self, notebook, page, page_index):
+        self.log.debug('Setting progress to step: %r', page_index)
         if page_index is None:
             page_index = self.notebook.get_current_page()
         self.progressBar.set_text(progress_bar_text[page_index])
@@ -526,11 +528,9 @@ class GetKeySection(Gtk.VBox):
 
 
             self.notebook.next_page()
-            self.set_progress_bar()
 
         elif button == self.backButton:
             self.notebook.prev_page()
-            self.set_progress_bar()
 
 
     def recieved_key(self, fingerprint, keydata, *data):
