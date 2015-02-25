@@ -485,11 +485,8 @@ class GetKeySection(Gtk.VBox):
     def on_button_clicked(self, button, *args, **kwargs):
 
         if button == self.nextButton:
-            self.notebook.next_page()
-            self.set_progress_bar()
-
             page_index = self.notebook.get_current_page()
-            if page_index == 1:
+            if page_index == 0:
                 if args:
                     # If we call on_button_clicked() from on_barcode()
                     # then we get extra arguments
@@ -503,7 +500,6 @@ class GetKeySection(Gtk.VBox):
                     if fingerprint is None:
                         self.log.error("The fingerprint typed was wrong. "
                             "Please re-check: %r", raw_text)
-                        self.notebook.prev_page()
                         return
 
                 # save a reference to the last received fingerprint
@@ -519,13 +515,16 @@ class GetKeySection(Gtk.VBox):
                         fingerprint, err)
 
 
-            if page_index == 2:
+            if page_index == 1:
                 # self.received_key_data will be set by the callback of the
                 # obtain_key function. At least it should...
                 # The data flow isn't very nice. It probably needs to be redone...
                 GLib.idle_add(self.sign_key_async, self.last_received_fingerprint,
                     self.send_email, self.received_key_data)
 
+
+            self.notebook.next_page()
+            self.set_progress_bar()
 
         elif button == self.backButton:
             self.notebook.prev_page()
