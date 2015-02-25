@@ -500,10 +500,10 @@ class GetKeySection(Gtk.VBox):
                     raw_text = self.scanPage.get_text_from_textview()
                     fingerprint = self.verify_fingerprint(raw_text)
 
-                    if fingerprint == None:
-                        self.log.error("The fingerprint typed was wrong."
-                        " Please re-check : {}".format(raw_text))
-                        # FIXME: make it to stop switch the page if this happens
+                    if fingerprint is None:
+                        self.log.error("The fingerprint typed was wrong. "
+                            "Please re-check: %r", raw_text)
+                        self.notebook.prev_page()
                         return
 
                 # save a reference to the last received fingerprint
