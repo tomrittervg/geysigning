@@ -42,7 +42,7 @@ from monkeysign.gpg import GpgRuntimeError
 from client_provider import AvahiClientProvider
 import key
 from SignPages import ScanFingerprintPage, SignKeyPage, PostSignPage
-
+from __init__ import register_ctrlc_quit
 
 # Is this harmful..?  There might be someone who has already called
 # init.  Will our own call cause problems, then?
@@ -559,6 +559,7 @@ class GnomeKeysignClient(Gtk.Application):
 
 def main(args=None):
     app = GnomeKeysignClient()
+    register_ctrlc_quit(app)
     return app.run(args)
     
 
