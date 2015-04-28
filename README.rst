@@ -6,7 +6,7 @@ A tool for signing OpenPGP keys.
 Its purpose is to ease signing other peoples' keys.
 It is similar to caff, PIUS, or monkeysign.  In fact, it is influenced a lot by these tools
 and either reimplements ideas or reuses code.
-Consider either of the aboved mentioned tools when you need a much more mature codebase.
+Consider either of the above mentioned tools when you need a much more mature codebase.
 
 In contrast to caff or monkeysign, this tool enables you to sign a key without contacting
 a key server.
@@ -54,7 +54,7 @@ Portability to older versions
 Currently, these issues are known to pose (minor) problems
 when attempting to run with older libraries
 
-Pyton-requests 1.2.3, as shipped with Ubuntu 13.10, cannot handle IPv4
+Python-requests 1.2.3, as shipped with Ubuntu 13.10, cannot handle IPv4
 in IPv6 URLs, i.e. http://[[1.2.3.4]]/.
 That should be easy to work around, though.
 
@@ -78,7 +78,7 @@ should have been deployed such that you should be able to run the
 program from your desktop shell. Search for "Keysign".
 If you want to run the program from the command line, you can
 add ~/.local/bin to your PATH.  The installation should have put an
-exectuable named keysign in that directory.
+executable named keysign in that directory.
 
 If you haven't installed via pip or not to your user's home directory
 (i.e. with --user), you can start the program from your environment's
